@@ -15,6 +15,8 @@ interface CommunityDua {
   likes: number;
 }
 
+const APP_URL = "https://aistudio.google.com/apps/drive/1PJYcvRNeW67P8MpkAvcSIDWT0mc25VPn?fullscreenApplet=true&showPreview=true";
+
 const INITIAL_DUAS: CommunityDua[] = [
   { id: '1', name: 'أحمد م.', text: 'اللهم اجعلنا ممن نالوا نصيباً من رحمتك في أول عشرة، ومغفرتك في ثانيها، وعتقك من النار في أواخرها.', timestamp: Date.now() - 3600000, likes: 45 },
   { id: '2', name: 'فاطمة س.', text: 'يا رب، بلغنا ليلة القدر ونحن في أحسن حال، واجبر خواطرنا جبراً يتعجب له أهل السماوات والأرض.', timestamp: Date.now() - 7200000, likes: 89 },
@@ -75,17 +77,20 @@ const DuaCommunity: React.FC = () => {
   };
 
   const handleShare = async (dua: CommunityDua) => {
-    const shareText = `✨ دعاء من مجتمع "أدعية رمضان" ✨\n\nبواسطة: ${dua.name}\n\n"${dua.text}"\n\n👇 شاركنا دعاءك عبر الرابط:\n${window.location.href}`;
+    const shareText = `✨ دعاء من مجتمع "أدعية رمضان" ✨\n\nبواسطة: ${dua.name}\n\n"${dua.text}"\n\n👇 شاركنا دعاءك عبر الرابط:\n${APP_URL}`;
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'مجتمع أدعية رمضان',
           text: shareText,
-          url: window.location.href
+          url: APP_URL
         });
-      } catch (err) {
-        console.error('Error sharing:', err);
+      } catch (err: any) {
+        // معالجة صامتة لإلغاء المشاركة
+        if (err.name !== 'AbortError') {
+          console.error('Error sharing:', err);
+        }
       }
     } else {
       navigator.clipboard.writeText(shareText);
@@ -97,8 +102,6 @@ const DuaCommunity: React.FC = () => {
     <div className="relative min-h-screen pt-32 pb-20 px-4 flex flex-col items-center">
       <Stars />
       <div className="max-w-6xl w-full relative z-10">
-        
-        {/* Header Section */}
         <div className="text-center mb-16 animate-fade-in">
           <div className="inline-block p-6 bg-[#d4af37]/10 rounded-full mb-6 border border-[#d4af37]/20">
             <Users className="w-14 h-14 text-[#d4af37]" />
@@ -110,7 +113,6 @@ const DuaCommunity: React.FC = () => {
           <Divider className="max-w-md mx-auto mt-8" />
         </div>
 
-        {/* Action Button */}
         <div className="flex justify-center mb-16">
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -121,7 +123,6 @@ const DuaCommunity: React.FC = () => {
           </button>
         </div>
 
-        {/* Duas Masonry-like Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {duas.map((dua) => (
             <div 
@@ -151,7 +152,6 @@ const DuaCommunity: React.FC = () => {
                 <button 
                   onClick={() => handleShare(dua)}
                   className="p-3 text-[#f8f1e7]/40 hover:text-[#d4af37] hover:bg-[#d4af37]/10 rounded-full transition-all"
-                  title="مشاركة"
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
@@ -160,7 +160,6 @@ const DuaCommunity: React.FC = () => {
           ))}
         </div>
 
-        {/* Empty State */}
         {duas.length === 0 && (
           <div className="text-center py-32 opacity-20 flex flex-col items-center">
             <MessageSquareText className="w-24 h-24 mb-6" />
@@ -169,7 +168,6 @@ const DuaCommunity: React.FC = () => {
         )}
       </div>
 
-      {/* Modern Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0a1128]/95 backdrop-blur-2xl animate-fade-in">
           <div className="bg-[#131d3d] border border-[#d4af37]/40 w-full max-w-2xl rounded-[56px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.6)] relative animate-scale-up">
@@ -211,7 +209,6 @@ const DuaCommunity: React.FC = () => {
                     dir="rtl"
                   />
                   
-                  {/* Smart Rephrase Button */}
                   <div className="absolute bottom-6 left-6">
                     <button 
                       onClick={handleRephrase}
@@ -233,15 +230,6 @@ const DuaCommunity: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-[#d4af37]/5 border border-[#d4af37]/10 rounded-[32px] p-6 flex items-center gap-4 group">
-                  <div className="bg-[#d4af37]/20 p-3 rounded-2xl">
-                    <Sparkles className="w-6 h-6 text-[#d4af37] animate-pulse" />
-                  </div>
-                  <span className="text-sm text-[#d4af37]/80 font-cairo leading-relaxed">
-                    تستطيع نشر النص كما كتبته، أو استخدام <strong className="text-[#d4af37]">الصياغة الذكية</strong> ليقوم Gemini بتحويله لأسلوب بليغ.
-                  </span>
-                </div>
-
                 <button 
                   onClick={handleAddDua}
                   disabled={!newDua.trim() || isRephrasing}
@@ -252,15 +240,10 @@ const DuaCommunity: React.FC = () => {
                 </button>
               </div>
             </div>
-
-            <div className="bg-[#d4af37]/5 p-6 text-center border-t border-[#d4af37]/10">
-              <p className="text-[#d4af37]/60 text-lg font-amiri">"تُهادُوا الحُبَّ غَيْباً بالدُّعَاء"</p>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Decorations */}
       <div className="fixed top-[20%] right-[-5%] opacity-10 pointer-events-none rotate-[20deg]">
         <Lantern className="w-48 h-80 text-[#d4af37]" />
       </div>

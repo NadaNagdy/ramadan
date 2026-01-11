@@ -18,3 +18,11 @@ export interface SpiritualReflection {
   text: string;
   source?: string;
 }
+
+export interface PlannerTask {
+  day: number;
+  event: string;
+  startTime: string; // HH:mm
+  endTime: string;   // HH:mm
+  type: 'fasting' | 'prayer' | 'suhoor' | 'iftar';
+}
