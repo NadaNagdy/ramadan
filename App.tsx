@@ -5,6 +5,10 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import DailyDuas from './pages/DailyDuas';
 import Categories from './pages/Categories';
+import QadrDuas from './pages/QadrDuas';
+import ProphetDuas from './pages/ProphetDuas';
+import QuranicDuas from './pages/QuranicDuas';
+import DuaCommunity from './pages/DuaCommunity';
 import AIDuaGenerator from './pages/AIDuaGenerator';
 import { CrescentMoon } from './components/IslamicDecorations';
 
@@ -33,6 +37,10 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/daily" element={<DailyDuas />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/qadr" element={<QadrDuas />} />
+            <Route path="/prophets" element={<ProphetDuas />} />
+            <Route path="/quranic" element={<QuranicDuas />} />
+            <Route path="/community" element={<DuaCommunity />} />
             <Route path="/ai-dua" element={<AIDuaGenerator />} />
           </Routes>
         </main>

@@ -9,9 +9,11 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { label: 'عن الموقع', path: '/ai-dua' }, // Linked to spiritual assistant/about for now
-    { label: 'شارك دعاءك', path: '/ai-dua' },
+    { label: 'مجتمع الدعاء', path: '/community' },
+    { label: 'أدعية قرآنية', path: '/quranic' },
+    { label: 'أدعية الأنبياء', path: '/prophets' },
     { label: 'أدعية بالنية', path: '/categories' },
+    { label: 'ليلة القدر', path: '/qadr' },
     { label: 'أدعية الأيام', path: '/daily' },
     { label: 'الرئيسية', path: '/' },
   ];
@@ -20,13 +22,12 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo Section - Left Side */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-4">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-lg font-cairo transition-all hover:text-[#d4af37] ${
+                className={`text-base font-cairo transition-all hover:text-[#d4af37] ${
                   location.pathname === item.path ? 'text-[#d4af37] font-bold' : 'text-[#f8f1e7]/80'
                 }`}
               >
@@ -35,7 +36,6 @@ const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Logo - Right Side as in Image */}
           <Link to="/" className="flex items-center gap-3 group">
             <span className="font-amiri text-2xl font-bold text-[#d4af37]">أدعية رمضان</span>
             <CrescentMoon className="w-8 h-8 text-[#d4af37] transition-transform group-hover:scale-110" />
@@ -52,7 +52,6 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-[#0a1128]/95 backdrop-blur-xl border-b border-[#d4af37]/20 animate-fade-in">
           <div className="px-4 pt-2 pb-6 space-y-4 text-center">

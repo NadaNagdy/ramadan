@@ -1,7 +1,8 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// Initialize the Google GenAI SDK with the API key from environment variables as required by guidelines.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 function decode(base64: string) {
   const binaryString = atob(base64);

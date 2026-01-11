@@ -1,17 +1,19 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Sparkles, Send, Loader2, RefreshCw } from 'lucide-react';
 import { generatePersonalizedDua } from '../services/geminiService';
 import { Stars, Lantern, Divider } from '../components/IslamicDecorations';
 import DuaCard from '../components/DuaCard';
 
 const AIDuaGenerator: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
+  const location = useLocation();
+  const [prompt, setPrompt] = useState(location.state?.initialPrompt || '');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ arabic: string; translation: string; reflection: string } | null>(null);
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGenerate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!prompt.trim()) return;
 
     setLoading(true);
@@ -25,6 +27,13 @@ const AIDuaGenerator: React.FC = () => {
     }
   };
 
+  // توليد الدعاء تلقائياً إذا جاء المستخدم بنص من الصفحة الرئيسية
+  useEffect(() => {
+    if (location.state?.initialPrompt) {
+      handleGenerate();
+    }
+  }, []);
+
   return (
     <div className="relative min-h-screen pt-32 pb-20 px-4">
       <Stars />
@@ -33,9 +42,9 @@ const AIDuaGenerator: React.FC = () => {
           <div className="inline-block p-4 bg-[#d4af37]/10 rounded-full mb-4 animate-float">
             <Sparkles className="w-10 h-10 text-[#d4af37]" />
           </div>
-          <h1 className="font-amiri text-4xl md:text-5xl font-bold text-[#d4af37] mb-4">المساعد الروحي</h1>
+          <h1 className="font-amiri text-4xl md:text-5xl font-bold text-[#d4af37] mb-4">تهادوا الحب غيباً بالدعاء</h1>
           <p className="text-[#f8f1e7]/70 text-lg">
-            اكتب ما يجول في خاطرك أو حاجتك، وسيقوم النظام بصياغة دعاء مأثور ومناسب لحالك
+            اكتب حاجتك أو لمن تحب بصدق، وسيقوم النظام بصياغة دعاء مأثور ومناسب ببركة هذا الشهر
           </p>
         </div>
 
@@ -73,7 +82,7 @@ const AIDuaGenerator: React.FC = () => {
                 <Sparkles className="w-4 h-4" />
                 لمسة روحانية
               </h4>
-              <p className="text-[#f8f1e7]/80 leading-relaxed italic">
+              <p className="text-[#f8f1e7]/80 leading-relaxed italic font-amiri text-xl">
                 {result.reflection}
               </p>
             </div>
