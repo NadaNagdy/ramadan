@@ -1,26 +1,23 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
-/**
- * توليد دعاء مخصص بناءً على سياق المستخدم
- */
 export async function generatePersonalizedDua(prompt: string): Promise<{ arabic: string; translation: string; reflection: string }> {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `صُغ دعاءً رمضانياً خاشعاً وبليغاً بناءً على هذا السياق: "${prompt}". 
-      يجب أن يكون النص بأسلوب الأدعية المأثورة. قدم أيضاً شرحاً بسيطاً لمعناه ولمسة روحانية.
-      يجب أن يكون المخرج بتنسيق JSON حصراً.`,
+      contents: `Generate a beautiful and sincere Ramadan dua in Arabic based on this context: "${prompt}". 
+      Also provide its meaning in Arabic and a brief spiritual reflection. 
+      Output MUST be valid JSON.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            arabic: { type: Type.STRING, description: "نص الدعاء بالعربية الفصحى البليغة." },
-            translation: { type: Type.STRING, description: "معنى الدعاء بكلمات بسيطة." },
-            reflection: { type: Type.STRING, description: "تأمل روحاني قصير." }
+            arabic: { type: Type.STRING, description: "The dua in Arabic calligraphy-style text." },
+            translation: { type: Type.STRING, description: "The meaning or translation in simple Arabic." },
+            reflection: { type: Type.STRING, description: "A short spiritual message or reflection related to the dua." }
           },
           required: ["arabic", "translation", "reflection"]
         }
@@ -34,32 +31,12 @@ export async function generatePersonalizedDua(prompt: string): Promise<{ arabic:
   }
 }
 
-/**
- * إعادة صياغة نص المستخدم ليكون بليغاً
- */
-export async function rephraseDua(text: string): Promise<string> {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `حول هذا النص البسيط إلى دعاء رمضاني فصيح وبليغ جداً ومؤثر: "${text}". 
-      اجعل النص قصيراً ومركزاً (لا يتجاوز ١٢٠ حرفاً). أرجع النص المصاغ فقط بدون أي مقدمات.`,
-    });
-    return response.text?.trim() || text;
-  } catch (error) {
-    console.error("Error rephrasing dua:", error);
-    return text;
-  }
-}
-
-/**
- * توليد أدعية لمجموعة معينة
- */
 export async function generateCategoryDuas(categoryName: string, count: number = 5): Promise<string[]> {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `أعطني ${count} أدعية إسلامية فريدة وعميقة تخص تصنيف: "${categoryName}". 
-      يجب أن تكون الأدعية بليغة ومناسبة لأجواء رمضان. أرجع النتيجة كقائمة JSON.`,
+      contents: `Generate ${count} unique and profound Islamic supplications (duas) in Arabic for the category: "${categoryName}". 
+      Return only an array of strings in JSON format.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -75,20 +52,18 @@ export async function generateCategoryDuas(categoryName: string, count: number =
   }
 }
 
-/**
- * الحصول على تأمل يومي عشوائي
- */
 export async function getDailyReflection(): Promise<string> {
   try {
-    const topics = ["الإخلاص", "التوبة", "الصدقة", "القرآن", "قيام الليل", "صلة الرحم", "الدعاء بظهر الغيب"];
-    const topic = topics[Math.floor(Math.random() * topics.length)];
+    // إضافة عنصر عشوائي للطلب لضمان تنوع النتائج في كل مرة
+    const randomTopics = ["الصبر", "الامتنان", "التقوى", "الرحمة", "التسامح", "الإخلاص", "بر الوالدين", "قيام الليل"];
+    const randomTopic = randomTopics[Math.floor(Math.random() * randomTopics.length)];
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `اكتب حكمة أو تأملاً روحانياً قصيراً ومؤثراً عن "${topic}" في رمضان. يجب ألا يتجاوز ١٥٠ حرفاً.`,
+      contents: `أعطني تأملاً روحانياً قصيراً وملهماً عن ${randomTopic} في شهر رمضان المبارك باللغة العربية. اجعل النص عميقاً ومؤثراً ولا يتجاوز ٢٠٠ حرف.`,
     });
-    return response.text?.trim() || "رمضان فرصة لترميم القلوب والتقرب من علام الغيوب.";
+    return response.text || "رمضان شهر الخير والبركة، فاستثمر كل لحظة في طاعة الله.";
   } catch (error) {
-    return "رمضان شهر الطاعات والبركات، فاستبقه بالخيرات.";
+    return "رمضان مبارك، تقبل الله منا ومنكم صالح الأعمال.";
   }
 }

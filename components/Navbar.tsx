@@ -9,8 +9,8 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { label: 'مجتمع الدعاء', path: '/community' },
-    { label: 'المخطط', path: '/planner' },
+    { label: 'أدعية قرآنية', path: '/quranic' },
+    { label: 'أدعية الأنبياء', path: '/prophets' },
     { label: 'أدعية بالنية', path: '/categories' },
     { label: 'ليلة القدر', path: '/qadr' },
     { label: 'أدعية الأيام', path: '/daily' },

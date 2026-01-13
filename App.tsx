@@ -8,9 +8,7 @@ import Categories from './pages/Categories';
 import QadrDuas from './pages/QadrDuas';
 import ProphetDuas from './pages/ProphetDuas';
 import QuranicDuas from './pages/QuranicDuas';
-import DuaCommunity from './pages/DuaCommunity';
 import AIDuaGenerator from './pages/AIDuaGenerator';
-import RamadanPlanner from './pages/RamadanPlanner';
 import { CrescentMoon } from './components/IslamicDecorations';
 
 const Footer: React.FC = () => (
@@ -22,7 +20,7 @@ const Footer: React.FC = () => (
       <div className="flex justify-center gap-6 text-sm text-[#f8f1e7]/30">
         <span>صدقة جارية</span>
         <span>•</span>
-        <span>١٤٤٧ هـ</span>
+        <span>١٤٤٦ هـ</span>
       </div>
     </div>
   </footer>
@@ -41,9 +39,7 @@ const App: React.FC = () => {
             <Route path="/qadr" element={<QadrDuas />} />
             <Route path="/prophets" element={<ProphetDuas />} />
             <Route path="/quranic" element={<QuranicDuas />} />
-            <Route path="/community" element={<DuaCommunity />} />
             <Route path="/ai-dua" element={<AIDuaGenerator />} />
-            <Route path="/planner" element={<RamadanPlanner />} />
           </Routes>
         </main>
         <Footer />

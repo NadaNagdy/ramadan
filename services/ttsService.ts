@@ -1,22 +1,7 @@
 
 import { GoogleGenAI, Modality } from "@google/genai";
 
-// Initialize the Google GenAI SDK
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-// Persistent AudioContext for lower latency on subsequent plays.
-let persistentAudioCtx: AudioContext | null = null;
-
-function getAudioContext() {
-  if (!persistentAudioCtx) {
-    persistentAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-  }
-  // Handle auto-play policy by resuming if suspended.
-  if (persistentAudioCtx.state === 'suspended') {
-    persistentAudioCtx.resume();
-  }
-  return persistentAudioCtx;
-}
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
 function decode(base64: string) {
   const binaryString = atob(base64);
@@ -47,23 +32,16 @@ async function decodeAudioData(
   return buffer;
 }
 
-/**
- * Optimizes the speed of listening to dua by reusing the AudioContext
- * and ensuring a direct prompt for the TTS model.
- */
 export async function speakDua(text: string) {
   try {
-    const audioCtx = getAudioContext();
-    
-    // Requesting audio generation with high-priority config
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: `Recite beautifully in Arabic: ${text}` }] }],
+      contents: [{ parts: [{ text: `Recite this Islamic Dua with a calm and reverent tone: ${text}` }] }],
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' }, // Use a clear voice
+            prebuiltVoiceConfig: { voiceName: 'Kore' },
           },
         },
       },
@@ -72,6 +50,7 @@ export async function speakDua(text: string) {
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) throw new Error("No audio returned");
 
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
     const audioBuffer = await decodeAudioData(
       decode(base64Audio),
       audioCtx,
@@ -82,7 +61,7 @@ export async function speakDua(text: string) {
     const source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
     source.connect(audioCtx.destination);
-    source.start(0);
+    source.start();
 
     return source;
   } catch (error) {

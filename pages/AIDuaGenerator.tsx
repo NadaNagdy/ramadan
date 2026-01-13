@@ -1,19 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Sparkles, Send, Loader2, RefreshCw } from 'lucide-react';
 import { generatePersonalizedDua } from '../services/geminiService';
 import { Stars, Lantern, Divider } from '../components/IslamicDecorations';
 import DuaCard from '../components/DuaCard';
 
 const AIDuaGenerator: React.FC = () => {
-  const location = useLocation();
-  const [prompt, setPrompt] = useState(location.state?.initialPrompt || '');
+  const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ arabic: string; translation: string; reflection: string } | null>(null);
 
-  const handleGenerate = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!prompt.trim()) return;
 
     setLoading(true);
@@ -26,13 +24,6 @@ const AIDuaGenerator: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // توليد الدعاء تلقائياً إذا جاء المستخدم بنص من الصفحة الرئيسية
-  useEffect(() => {
-    if (location.state?.initialPrompt) {
-      handleGenerate();
-    }
-  }, []);
 
   return (
     <div className="relative min-h-screen pt-32 pb-20 px-4">
